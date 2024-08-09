@@ -18,14 +18,13 @@ int inserirInicio(Lista *lista, int dado);
 int inserirFinal(Lista *lista, int dado);
 int removerDado(Lista *lista, int dado);
 void exibe(Lista *lista);
-void lsepara(Lista *lista, int dado, Lista *lista2);
+Lista *lsepara(Lista *lista, int dado);
 
 int main() {
     Lista minhalista;
-    Lista lista2;
+    Lista *lista2;
 
     inicializar(&minhalista);
-    inicializar(&lista2);
 
     inserirInicio(&minhalista, 2);
     inserirInicio(&minhalista, 5);
@@ -38,15 +37,15 @@ int main() {
     exibe(&minhalista);
 
     // Dividir a lista em 2
-    lsepara(&minhalista, 5, &lista2);
+    lista2 = lsepara(&minhalista, 5);
 
     printf("Lista Original após a separação:\n");
     exibe(&minhalista);
     printf("Tamanho: %d \n\n", minhalista.tam);
 
     printf("Nova Lista após a separação:\n");
-    exibe(&lista2);
-    printf("Tamanho: %d \n\n", lista2.tam);
+    exibe(lista2);
+    printf("Tamanho: %d \n\n", lista2->tam);
 
     return 0;
 }
@@ -141,8 +140,9 @@ int removerDado(Lista *lista, int dado) {
     return qtdRem;
 }
 
-void lsepara(Lista *lista, int dado, Lista *lista2) {
+Lista *lsepara(Lista *lista, int dado) {
     No *aux = lista->inicio;
+    Lista *lista2 = malloc(sizeof(Lista));
     int qtd1 = 0;
 
     while (aux != NULL && aux->dado != dado) {
@@ -159,4 +159,5 @@ void lsepara(Lista *lista, int dado, Lista *lista2) {
         lista2->tam = lista->tam - (qtd1 + 1);
         lista->tam = qtd1 + 1;
     }
+    return lista2;
 }
