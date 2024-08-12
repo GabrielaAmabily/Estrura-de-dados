@@ -2,6 +2,9 @@
 #include <stdlib.h>
 
 // Lista simplesmente encadeada e não ordenada
+// funções padrao de inserção e remoção 
+// função separa e contatena lista 
+
 typedef struct no {
     int dado;
     struct no *prox;
@@ -19,6 +22,7 @@ int inserirFinal(Lista *lista, int dado);
 int removerDado(Lista *lista, int dado);
 void exibe(Lista *lista);
 Lista *lsepara(Lista *lista, int dado);
+Lista *concatenar( Lista *lista1, Lista *lista2);
 
 int main() {
     Lista minhalista;
@@ -31,21 +35,25 @@ int main() {
     inserirFinal(&minhalista, 10);
     inserirFinal(&minhalista, 8);
     inserirFinal(&minhalista, 1);
-    removerDado(&minhalista, 1);
-
+    
     printf("Lista Original antes da separação:\n");
     exibe(&minhalista);
-
-    // Dividir a lista em 2
-    lista2 = lsepara(&minhalista, 5);
-
-    printf("Lista Original após a separação:\n");
+    
+    if(minhalista.tam <= 1 ){ 
+        printf ("nao foi possivel dividir a lista devido ao tamanho");
+    } else{
+        lista2 = lsepara(&minhalista, 2);
+        printf("Lista Original após a separação:\n");
+        exibe(&minhalista);
+        printf("Tamanho: %d \n\n", minhalista.tam);
+        printf("Nova Lista após a separação:\n");
+        exibe(lista2);
+        printf("Tamanho: %d \n\n", lista2->tam);
+    }
+    
+    printf("Lista concatenada: \n");
+    concatenar(&minhalista, lista2);
     exibe(&minhalista);
-    printf("Tamanho: %d \n\n", minhalista.tam);
-
-    printf("Nova Lista após a separação:\n");
-    exibe(lista2);
-    printf("Tamanho: %d \n\n", lista2->tam);
 
     return 0;
 }
@@ -143,6 +151,7 @@ int removerDado(Lista *lista, int dado) {
 Lista *lsepara(Lista *lista, int dado) {
     No *aux = lista->inicio;
     Lista *lista2 = malloc(sizeof(Lista));
+    inicializar(lista2);
     int qtd1 = 0;
 
     while (aux != NULL && aux->dado != dado) {
@@ -150,14 +159,39 @@ Lista *lsepara(Lista *lista, int dado) {
         aux = aux->prox;
     }
 
-    if (aux != NULL && aux->dado == dado) {
-        lista2->inicio = aux->prox;
-        lista2->fim = lista->fim;
-        aux->prox = NULL;
-        lista->fim = aux;
-
-        lista2->tam = lista->tam - (qtd1 + 1);
-        lista->tam = qtd1 + 1;
+        if (aux-> prox == NULL) {
+            printf("nao foi possivel separar pois este ja eh o ultimo elemento da lista ou elemento nao foi encontrado.\n\n");
+            return lista2;
+        }
+    
+        else if(aux->dado == dado) {
+            lista2->inicio = aux->prox;
+            lista2->fim = lista->fim;
+            aux->prox = NULL;
+            lista->fim = aux;
+            lista2->tam = lista->tam - (qtd1 + 1);
+            lista->tam = qtd1 + 1;
     }
     return lista2;
+}
+
+Lista *concatenar( Lista *lista1, Lista *lista2){
+    No *aux = lista1->inicio; 
+    if(lista1->inicio == NULL){
+        printf("    A lista esta vazia nao ha nada para concatenar \n\n");
+        return 0;
+    } else {
+        lista1->fim->prox = lista2->inicio;
+        if(lista2->inicio == NULL){
+        printf("    A lista 2 esta vazia nao ha nada para concatenar com lista 1 \n\n");
+        return 0;
+            }else{
+                while (aux->prox != NULL){
+                    aux = aux->prox;
+                }
+                lista1->fim = aux;
+                free(lista2);
+                return lista1;
+        }
+    }
 }
